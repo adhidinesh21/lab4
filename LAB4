@@ -289,6 +289,70 @@ mysql> SELECT * FROM IAMARKS;
 18 rows in set (0.00 sec)
 
 mysql> 
+mysql> SELECT * FROM STUDENT WHERE USN IN(SELECT USN FROM CLASS WHERE SSID IN( SELECT SSID FROM SEMSEC WHERE SEM=4 AND SEC='CS3'));
++------------+-------+---------+-----------+--------+
+| USN        | SNAME | ADDRESS | PHONE     | GENDER |
++------------+-------+---------+-----------+--------+
+| 4MT19CS006 | ABHI  | DELHI   | 701258465 | MALE   |
++------------+-------+---------+-----------+--------+
+
+
+mysql> SELECT SEMSEC.SEM,SEMSEC.SEC,COUNT(CASE WHEN GENDER='MALE' THEN STUDENT.USN END) AS NO_OF_MALES,COUNT(CASE WHEN GENDER='FEMALE' THEN STUDENT. USN END) AS NO_OF_FEMALES FROM (STUDENT JOIN SEMSEC JOIN CLASS  ON STUDENT.USN=CLASS.USN AND CLASS.SSID=SEMSEC.SSID) GROUP BY SEM,SEC;
++------+------+-------------+---------------+
+| SEM  | SEC  | NO_OF_MALES | NO_OF_FEMALES |
++------+------+-------------+---------------+
+| 2    | 2CS1 |           1 |             0 |
+| 3    | 3CS1 |           0 |             1 |
+| 4    | CS3  |           1 |             0 |
+| 5    | 5CS1 |           2 |             0 |
+| 5    | 5CS2 |           0 |             1 |
++------+------+-------------+---------------+
+
+
+mysql> CREATE VIEW TEST1_MARKS(SUBCODE,TEST1) AS (SELECT SUBCODE,TEST1 FROM IAMARKS WHERE USN='4MT19CS001');
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> SELECT * FROM TEST1_MARKS;
++---------+-------+
+| SUBCODE | TEST1 |
++---------+-------+
+| 18CS51  |    35 |
+| 18CS52  |    37 |
+| 18CS53  |    40 |
+| 18CS54  |    48 |
+| 18CS55  |    32 |
+| 18CS56  |    36 |
++---------+-------+
+
+
+mysql> UPDATE IAMARKS SET FINAL_IA=(TEST1+TEST2+TEST3-LEAST(TEST1,TEST2,TEST3))/2;
+Query OK, 18 rows affected (0.03 sec)
+Rows matched: 18  Changed: 18  Warnings: 0
+
+mysql> SELECT * FROM IAMARKS;
++------------+---------+------+-------+-------+-------+----------+
+| USN        | SUBCODE | SSID | TEST1 | TEST2 | TEST3 | FINAL_IA |
++------------+---------+------+-------+-------+-------+----------+
+| 4MT19CS001 | 18CS51  | 1    |    35 |    40 |    38 |       39 |
+| 4MT19CS001 | 18CS52  | 1    |    37 |    46 |    34 |       42 |
+| 4MT19CS001 | 18CS53  | 1    |    40 |    49 |    39 |       45 |
+| 4MT19CS001 | 18CS54  | 1    |    48 |    40 |    30 |       44 |
+| 4MT19CS001 | 18CS55  | 1    |    32 |    47 |    34 |       41 |
+| 4MT19CS001 | 18CS56  | 1    |    36 |    42 |    35 |       39 |
+| 4MT19CS002 | 18CS51  | 2    |    35 |    22 |    45 |       40 |
+| 4MT19CS002 | 18CS52  | 2    |    30 |    42 |    35 |       39 |
+| 4MT19CS002 | 18CS53  | 2    |    38 |    32 |    45 |       42 |
+| 4MT19CS002 | 18CS54  | 2    |    48 |    29 |    25 |       39 |
+| 4MT19CS002 | 18CS55  | 2    |    41 |    31 |    21 |       36 |
+| 4MT19CS002 | 18CS56  | 2    |    39 |    36 |    41 |       40 |
+| 4MT19CS003 | 18CS51  | 3    |    29 |    26 |    31 |       30 |
+| 4MT19CS003 | 18CS52  | 3    |    39 |    46 |    41 |       44 |
+| 4MT19CS003 | 18CS53  | 3    |    34 |    41 |    40 |       41 |
+| 4MT19CS003 | 18CS54  | 3    |    14 |    25 |    31 |       28 |
+| 4MT19CS003 | 18CS55  | 3    |    34 |    45 |    38 |       42 |
+| 4MT19CS003 | 18CS56  | 3    |    44 |    43 |    42 |       44 |
++------------+---------+------+-------+-------+-------+----------+
+
 
 
  
